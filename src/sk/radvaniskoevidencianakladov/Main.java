@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Scanner;
 
 
@@ -46,62 +47,41 @@ public class Main {
                 case "1":
                     Scanner sc1 = new Scanner(System.in);
                     String vstup;
-                    int vstupInt;
                     double vstupcena=0;
                     System.out.println("Zadaj novú položku do zoznamu nákladov");
-
                     vstup = sc1.next();
 
                     if (!vstup.equals("")) {
                         Vydavok polozka=new Vydavok();
                         polozka.setPopisVydavku(vstup);
-
                         System.out.println("Zadaj Sumu :");
                         try
-                        {
-                            vstupcena = sc1.nextDouble();
-
-                        }
+                        { vstupcena = sc1.nextDouble(); }
                         catch (Exception e) {
 
                             System.out.println(" Nezadal si spravne hodnotu nakladu, táto položka sa nezapísala");
                             System.out.println("Zadaj svoju volbu:");
                             break;
                         }
-
                         polozka.setSuma(vstupcena);
 
-/*
-                        Date obdobie=new Date();
-                        sc1 = new Scanner(System.in);
-                        System.out.println("Obdobie kedy vznikol vydavok - Zadaj deň :");
-                        vstupInt = sc1.nextInt();
-                      obdobie.setDen(vstupInt);
+                        System.out.println("Zadaj kategóriu nákladu");
+                        vstup = sc1.next();
+                        polozka.setKategoria(vstup);
 
+                        Calendar currenttime = Calendar.getInstance();
+                        Date dnesnydatum= new Date((currenttime.getTime()).getTime());
+                         polozka.setDatum(dnesnydatum);
 
-
-                        sc1 = new Scanner(System.in);
-                        System.out.println("Obdobie kedy vznikol vydavok - Zadaj  mesiac :");
-                        vstupInt = sc1.nextInt();
-                        obdobie.setMesiac(vstupInt);
-
-
-                        sc1 = new Scanner(System.in);
-                        System.out.println("Zadaj  rok  :");
-                        vstupInt = sc1.nextInt();
-                        obdobie.setRok(vstupInt);
-
-//                            polozka.setDatumZadania(vstup); // zmena za Objekt obdobie
-                        polozka.setObdobie(obdobie);
-*/
-
-
-                        System.out.println("Zadany naklad:");
+                        System.out.println("Zadany výdavok:");
                         System.out.println(polozka.getPopisVydavku());
-//                            System.out.println(polozka.getDatumZadania());
                         System.out.println(polozka.getSuma());
+                        System.out.println(polozka.getDatum());
 
-                        zoznamVydavkov.add(polozka);
+//                        zoznamVydavkov.add(polozka);
+
+                        //  kod na ulozenie arraylistu do dtb
+                        sluzby.vlozVydavokMySql(conn,polozka);
 
                     }
 
@@ -110,22 +90,33 @@ public class Main {
 
                 case "2":
 
+                    // ako dostať do arraylistu zo sluzby
+                    zoznamVydavkov=sluzby.vyberVsetkyMySql(conn);
+                    System.out.println(" Zoznam vydavkov: ");
+                    System.out.println("_______________________________________________________");
+                    for (Vydavok polozka: zoznamVydavkov) {
 
+                        System.out.println(polozka.getPopisVydavku()+"  "+polozka.getSuma()+ "  "+polozka.getDatum()+polozka.getKategoria() );
+                                                                    }
+                    System.out.println("_______________________________________________________");
                     System.out.println("Zadaj svoju volbu:");
 
                     break;
 
                 case "3":
                     double suma=0;
+                    suma= sluzby.sumaVydavkovAll(conn);
+                    System.out.println("Suma tvojich výdavkov  je: "  +suma);
+                    System.out.println();
+                    System.out.println("Zadaj svoju volbu:");
 
+                    /*
                     for (Vydavok  polozka1 : zoznamVydavkov) {
                         suma=suma+polozka1.getSuma();
                     }
-
                     System.out.println("Suma tvojich nakladov je: " +suma + "  pocet zaznamov:  " +   zoznamVydavkov.size());
                     System.out.println();
-
-                    System.out.println("Zadaj svoju volbu:");
+                    System.out.println("Zadaj svoju volbu:");*/
                     break;
 
                 case "6":

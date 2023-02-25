@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Sluzby implements InterfaceSluzby {
 
 
-    private Connection conn;
+//    private Connection conn;
 
 
     public Sluzby() {
@@ -14,18 +14,47 @@ public class Sluzby implements InterfaceSluzby {
     }
 
     @Override
-    public void vlozVydavokMySql(Vydavok vydavok) {
+    public void vlozVydavokMySql(Connection conn, Vydavok vydavok) throws SQLException {
+        String sql = "INSERT INTO vydavky.vydavky01 (popisvydavku, suma,datum,kategoria) VALUES (?, ?, ?, ?)";
+        PreparedStatement statement = conn.prepareStatement(sql);
+        statement.setString(1, vydavok.getPopisVydavku());
+        statement.setDouble(2,  vydavok.getSuma());
+        statement.setDate(3,  vydavok.getDatum());
+        statement.setString(4,  vydavok.getKategoria());
+
+        statement.executeUpdate();
+
 
     }
 
     @Override
-    public void aktualizujVydavokMySql(int id, Vydavok vydavok) {
+    public void aktualizujVydavokMySql(int id, Connection conn, Vydavok vydavok) {
 
     }
 
     @Override
-    public ArrayList<Vydavok> vyberVsetkyMySql() {
-        return null;
+    public ArrayList<Vydavok> vyberVsetkyMySql(Connection conn) throws SQLException {
+
+        String sql = "SELECT * FROM vydavky01";
+        PreparedStatement statement = conn.prepareStatement(sql);
+        ResultSet result = statement.executeQuery();
+
+        ArrayList<Vydavok> zoznam = new ArrayList<Vydavok>();
+
+        while (result.next()) {
+            Vydavok polozka = new Vydavok();
+
+//            polozka.setId(result.getInt("id"));
+            polozka.setPopisVydavku(result.getString("popisvydavku"));
+            polozka.setSuma(result.getFloat("suma"));
+            polozka.setDatum(result.getDate("datum"));
+            polozka.setKategoria(result.getString("kategoria"));
+
+            zoznam.add(polozka);
+
+        }
+        return zoznam;
+
     }
 
     @Override
