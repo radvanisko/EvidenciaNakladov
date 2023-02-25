@@ -27,11 +27,7 @@ public class Main {
             conn = DriverManager.getConnection(url, username, password);
             System.out.println("Databáza je pripojená!");
         }
-
-
         Sluzby sluzby=new Sluzby();
-        System.out.println(sluzby.sumaVydavkovAll(conn));
-
         sluzby.vypisMenu();
 
         String menuvolba;
@@ -92,14 +88,16 @@ public class Main {
 
                     // ako dostať do arraylistu zo sluzby
                     zoznamVydavkov=sluzby.vyberVsetkyMySql(conn);
-                    System.out.println(" Zoznam vydavkov: ");
-                    System.out.println("_______________________________________________________");
+                    System.out.println(" Zoznam výdavkov: ");
+                    System.out.println("____________________________________________________________");
+                    System.out.println(String.format("%-5s %15s   %7s %12s %12s", "ID","Popis výdavku","suma","Dátum","Kategoria"));
+                    System.out.println("____________________________________________________________");
                     for (Vydavok polozka: zoznamVydavkov) {
-
-                        System.out.println(polozka.getPopisVydavku()+"  "+polozka.getSuma()+ "  "+polozka.getDatum()+polozka.getKategoria() );
-                                                                    }
-                    System.out.println("_______________________________________________________");
-                    System.out.println("Zadaj svoju volbu:");
+                    System.out.println(String.format("%-5s %15s   %7s %12s %12s", polozka.getId(),polozka.getPopisVydavku(),polozka.getSuma(),polozka.getDatum(),polozka.getKategoria()));
+                    }
+                        System.out.println("_______________________________________________________");
+                        System.out.println();
+                        System.out.println("Zadaj svoju volbu:");
 
                     break;
 
@@ -107,6 +105,7 @@ public class Main {
                     double suma=0;
                     suma= sluzby.sumaVydavkovAll(conn);
                     System.out.println("Suma tvojich výdavkov  je: "  +suma);
+                    System.out.println("Počet položiek je : "+ sluzby.pocetPoloziek(conn));
                     System.out.println();
                     System.out.println("Zadaj svoju volbu:");
 
@@ -130,6 +129,12 @@ public class Main {
                     break;
 
                 case "8":
+                    System.out.println("Zadaj číslo zaznamu, ktorý chceš vymazať!");
+                    Scanner sc2 = new Scanner(System.in);
+                    int id;
+                    id=sc2.nextInt();
+                    sluzby.odstranVydavokMySql(id,conn);
+                    System.out.println("Záznam číslo " + id + "  bol vymazaný!");
 
                     System.out.println("Zadaj svoju volbu:");
                     break;

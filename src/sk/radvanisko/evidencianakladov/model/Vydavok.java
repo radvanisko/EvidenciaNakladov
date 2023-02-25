@@ -5,12 +5,19 @@ import java.sql.Date;
 
 public class Vydavok {
 
+    private int id;
     private String popisVydavku;
     private String kategoria;
     private double suma;
     private java.sql.Date datum;
 
+    public int getId() {
+        return id;
+    }
 
+    public void setId(int id) {
+        this.id = id;
+    }
 
     // Gettery Settery
     public String getPopisVydavku() {

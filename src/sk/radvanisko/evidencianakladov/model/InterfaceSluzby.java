@@ -13,7 +13,7 @@ public interface InterfaceSluzby {
 
     void aktualizujVydavokMySql (int id, Connection conn,Vydavok vydavok);
      ArrayList<Vydavok> vyberVsetkyMySql(Connection conn) throws SQLException;
-     void odstranVydavokMySql(int id);
+     void odstranVydavokMySql(int id,Connection connection) throws SQLException;
 
     // praca s modelom
      void vlozVydavok (Vydavok vydavok);
@@ -23,7 +23,7 @@ public interface InterfaceSluzby {
      void vypisMenu();
      void vytlacDoPdf();
      double sumaVydavkovAll(Connection conn);
-     int pocetPoloziek();
+     int pocetPoloziek(Connection conn) throws SQLException;
 
 
 
