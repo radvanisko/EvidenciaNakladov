@@ -1,9 +1,11 @@
 package sk.radvaniskoevidencianakladov;
 
 
+import com.itextpdf.text.DocumentException;
 import sk.radvanisko.evidencianakladov.model.Sluzby;
 import sk.radvanisko.evidencianakladov.model.Vydavok;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -13,9 +15,8 @@ import java.util.Calendar;
 import java.util.Scanner;
 
 
-
 public class Main {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, DocumentException, IOException {
 
         Connection conn = null;
         String url = "jdbc:mysql://localhost:3306/vydavky";
@@ -41,11 +42,12 @@ public class Main {
 
             switch (menuvolba) {
                 case "1":
+
                     Scanner sc1 = new Scanner(System.in);
                     String vstup;
                     double vstupcena=0;
                     System.out.println("Zadaj novú položku do zoznamu nákladov");
-                    vstup = sc1.next();
+                    vstup = sc1.nextLine();
 
                     if (!vstup.equals("")) {
                         Vydavok polozka=new Vydavok();
@@ -74,9 +76,6 @@ public class Main {
                         System.out.println(polozka.getSuma());
                         System.out.println(polozka.getDatum());
 
-//                        zoznamVydavkov.add(polozka);
-
-                        //  kod na ulozenie arraylistu do dtb
                         sluzby.vlozVydavokMySql(conn,polozka);
 
                     }
@@ -118,6 +117,26 @@ public class Main {
                     System.out.println("Zadaj svoju volbu:");*/
                     break;
 
+                case  "4": // oprav zaznam
+
+
+                    System.out.println("Zadaj číslo zaznamu, ktorý chceš editovať!");
+                    Scanner sc4 = new Scanner(System.in);
+                    int id;
+                    id=sc4.nextInt();  //todo treba osetrit vstup
+
+                    Vydavok polozka=new Vydavok();
+                    polozka=sluzby.vlozVydavok();
+
+//                    polozka.setId(id);
+                    System.out.println("Zadaný výdavok:");
+                    System.out.println(String.format("%-5s %15s   %7s %12s %12s", polozka.getId(),polozka.getPopisVydavku(),polozka.getSuma(),polozka.getDatum(),polozka.getKategoria()));
+
+                    sluzby.aktualizujVydavokMySql(id,conn,polozka);  //todo dokončiť
+                    System.out.println("Záznam číslo " + id + "  bol aktualizovaný!");
+
+                    break;
+
                 case "6":
 
                     System.out.println("Zadaj svoju volbu:");
@@ -125,16 +144,24 @@ public class Main {
 
                 case "7":
 
+                    sluzby.vytlacMySql2Pdf(conn);
+                    System.out.println("Subor bol vytvoreny!!");
+
                     System.out.println("Zadaj svoju volbu:");
                     break;
 
                 case "8":
                     System.out.println("Zadaj číslo zaznamu, ktorý chceš vymazať!");
-                    Scanner sc2 = new Scanner(System.in);
-                    int id;
-                    id=sc2.nextInt();
+                    Scanner sc8 = new Scanner(System.in);
+
+                    try { id=sc8.nextInt();} catch (Exception e) {
+                        System.out.println(" Nezadal si spravne hodnotu ID , žiadna položka sa nezmazala!");
+                        System.out.println("Zadaj svoju volbu:");
+                        break;
+                    }
                     sluzby.odstranVydavokMySql(id,conn);
                     System.out.println("Záznam číslo " + id + "  bol vymazaný!");
+
 
                     System.out.println("Zadaj svoju volbu:");
                     break;

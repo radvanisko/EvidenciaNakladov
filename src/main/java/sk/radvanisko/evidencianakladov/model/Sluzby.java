@@ -1,0 +1,247 @@
+package sk.radvanisko.evidencianakladov.model;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Scanner;
+
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfWriter;
+
+public class Sluzby implements InterfaceSluzby {
+
+
+//    private Connection conn;
+
+
+    public Sluzby() {
+
+    }
+
+    @Override
+    public void vlozVydavokMySql(Connection conn, Vydavok vydavok) throws SQLException {
+        String query = "INSERT INTO vydavky.vydavky01 (popisvydavku, suma,datum,kategoria) VALUES (?, ?, ?, ?)";
+
+        PreparedStatement statement = conn.prepareStatement(query);
+
+        statement.setString(1, vydavok.getPopisVydavku());
+        statement.setDouble(2, vydavok.getSuma());
+        statement.setDate(3, vydavok.getDatum());
+        statement.setString(4, vydavok.getKategoria());
+        
+        System.out.println(String.format("%-5s %15s   %7s %12s %12s", vydavok.getId(),vydavok.getPopisVydavku(),vydavok.getSuma(),vydavok.getDatum(),vydavok.getKategoria()));
+
+        statement.executeUpdate();
+
+
+    }
+
+    @Override
+    public void aktualizujVydavokMySql(int id, Connection conn, Vydavok vydavok) throws SQLException {
+
+       String query="UPDATE vydavky.vydavky01 SET popisvydavku = ?, suma = ?, datum = ?, kategoria = ?  WHERE id = ?";
+
+        PreparedStatement statement = conn.prepareStatement(query);
+
+
+        statement.setString(1, vydavok.getPopisVydavku());
+        statement.setDouble(2, vydavok.getSuma());
+        statement.setDate(3, vydavok.getDatum());
+        statement.setString(4, vydavok.getKategoria());
+
+        statement.setInt(5, id);
+
+        statement.executeUpdate();
+
+    }
+
+    @Override
+    public ArrayList<Vydavok> vyberVsetkyMySql(Connection conn) throws SQLException {
+
+        String sql = "SELECT * FROM vydavky01";
+        PreparedStatement statement = conn.prepareStatement(sql);
+        ResultSet result = statement.executeQuery();
+//        int id = 1;
+
+        ArrayList<Vydavok> zoznam = new ArrayList<Vydavok>();
+
+        while (result.next()) {
+            Vydavok vydavok = new Vydavok();
+
+            vydavok.setId(result.getInt("id"));
+            vydavok.setPopisVydavku(result.getString("popisvydavku"));
+            vydavok.setSuma(result.getFloat("suma"));
+            vydavok.setDatum(result.getDate("datum"));
+            vydavok.setKategoria(result.getString("kategoria"));
+
+            zoznam.add(vydavok);
+
+        }
+        return zoznam;
+
+    }
+
+    @Override
+    public void odstranVydavokMySql(int id, Connection connection) throws SQLException {
+        String sql = "DELETE FROM vydavky.vydavky01 WHERE id = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, id);
+        statement.executeUpdate();
+
+
+    }
+
+    @Override
+    public Vydavok  vlozVydavok() {
+
+        Scanner sc1 = new Scanner(System.in);
+        String vstup;
+        double vstupcena=0;
+        System.out.println("Zadaj popis výdavku");
+        vstup = sc1.nextLine();
+
+        if (!vstup.equals("")) {
+            Vydavok vydavok = new Vydavok();
+            vydavok.setPopisVydavku(vstup);
+            System.out.println("Zadaj Sumu :");
+            try {
+                vstupcena = sc1.nextDouble();
+            } catch (Exception e) {
+
+                System.out.println(" Nezadal si spravne hodnotu nakladu, táto položka sa nezapísala");
+                System.out.println("Zadaj svoju volbu:");
+                 return null;
+            }
+            vydavok.setSuma((float) vstupcena);
+
+            System.out.println("Zadaj kategóriu nákladu");
+            vstup = sc1.next();
+            vydavok.setKategoria(vstup);
+
+            Calendar currenttime = Calendar.getInstance();
+            Date dnesnydatum = new Date((currenttime.getTime()).getTime());
+            vydavok.setDatum(dnesnydatum);
+
+
+            return vydavok;
+        }
+
+            return null;
+        }
+
+    @Override
+    public void vypisMenu() {
+
+        System.out.println();
+        System.out.println(" ---------- EVIDENCIA VYDAVKOV ---------");
+        System.out.println("---------------------------------------------------");
+        System.out.println("MENU>      (m)= MENU,....                     (q)= quit : ");
+        System.out.println("---------------------------------------------------");
+        System.out.println("MENU>      (1)= Zadaj novu položku            (q)= quit : ");
+        System.out.println("MENU>      (2)= Vypíš zoznam položiek         (q)= quit : ");
+        System.out.println("MENU>      (3)= Spočítaj sumu položiek        (q)= quit : ");
+        System.out.println("MENU>      (4)=Oprav záznam (ID)              (q)= quit : ");
+//        System.out.println("MENU>      (6)=                             (q)= quit : ");
+        System.out.println("MENU>      (7)= Vytlač do PDF                 (q)= quit : ");
+//
+        System.out.println("MENU>      (8)=Vymaž konkrétny záznam (ID)    (q)= quit : ");
+//        System.out.println("MENU>      (9)=                             (q)= quit : ");
+//        System.out.println("MENU>      (0)=                             (q)= quit : ");
+
+
+        System.out.println("---------------------------------------------------");
+        System.out.println("Zadaj svoju volbu:");
+
+
+    }
+
+    @Override
+    public void vytlacDoPdf() {
+
+    }
+
+    @Override
+    public void vytlacMySql2Pdf(Connection conn) throws SQLException, DocumentException, IOException {
+        ArrayList<Vydavok> vydavky =new ArrayList<Vydavok>();
+        int pocet =pocetPoloziek(conn);
+        double sucet= sumaVydavkovAll(conn);
+
+        vydavky=vyberVsetkyMySql(conn);
+
+        Calendar currenttime = Calendar.getInstance();
+        Date dnesnydatum = new Date((currenttime.getTime()).getTime());
+
+        // START - generovanie PDF
+        Document document = new Document(); // vytvorime prazdny PDF Dokument
+
+
+        String unicodeFontPath="C:\\Windows\\Fonts\\Tahoma.ttf";
+        BaseFont unicode = BaseFont.createFont(unicodeFontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        Font font = new Font(unicode, 14, Font.NORMAL);
+        Font fontNadpis = new Font(unicode, 20, Font.BOLD);
+
+//        font=new Font(Font.FontFamily.TIMES_ROMAN, 20);
+
+
+        try {
+            // vytvori konkretny subor HelloWorld.pdf, ktorý umiestni do priečinka \\Mac\Home\Documents\
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("report_vydavkov" + dnesnydatum+".pdf" ));
+            document.open(); // dokument musime ho otvorit
+//            document.add(new Header
+            document.add(new Paragraph("Zoznam výdavkov :  +ľščťžýáíéà. ",fontNadpis)); // do dokumentu vpiseme text  PDF documentu
+
+            for (Vydavok vystup: vydavky) {
+                document.add(new Paragraph(String.format("%-5s %15s   %7s %12s %12s", vystup.getId(),vystup.getPopisVydavku(),vystup.getSuma(),vystup.getDatum(),vystup.getDatum()),font));
+//                System.out.println(String.format("%-5s %15s   %7s %12s %12s", "ID",vystup.getPopisVydavku(),vystup.getSuma(),vystup.getDatum(),vystup.getDatum()));
+            }
+            document.add(new Paragraph("Suma výdavkov je: "+ sucet + "  Počet položiek je:  " +pocet,fontNadpis));
+
+            document.close(); // zatvorime dokument
+            writer.close(); // zatvorime subor
+        } catch (DocumentException e) {
+            System.out.println("Nastal problém s vytváraním dokumentu");
+        } catch (FileNotFoundException e) {
+            //e.printStackTrace();
+            System.out.println("Problém so súborom!");
+        }
+// END - generovanie PDF
+
+
+
+    }
+
+
+    @Override
+    public double sumaVydavkovAll(Connection conn) {
+
+        String query = "SELECT SUM(suma) AS sucet FROM  vydavky01;";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet resultSet = stmt.executeQuery(query);
+            if (resultSet.next()) {
+                double sucet = resultSet.getDouble("sucet");
+                return sucet;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
+    @Override
+    public int pocetPoloziek(Connection conn) throws SQLException {
+        int pocet = 0;
+        String query = "SELECT COUNT(*) AS pocet FROM  vydavky.vydavky01";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet resultSet = stmt.executeQuery(query);
+        resultSet.next();
+        pocet= resultSet.getInt("pocet");
+        return pocet;
+   }
+
+}

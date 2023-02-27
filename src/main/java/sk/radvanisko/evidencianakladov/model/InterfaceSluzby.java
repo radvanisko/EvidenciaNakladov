@@ -1,5 +1,8 @@
 package sk.radvanisko.evidencianakladov.model;
 
+import com.itextpdf.text.DocumentException;
+
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,18 +14,21 @@ public interface InterfaceSluzby {
     void vlozVydavokMySql(Connection conn,Vydavok vydavok) throws SQLException;
 
 
-    void aktualizujVydavokMySql (int id, Connection conn,Vydavok vydavok);
+    void aktualizujVydavokMySql (int id, Connection conn,Vydavok vydavok) throws SQLException;
      ArrayList<Vydavok> vyberVsetkyMySql(Connection conn) throws SQLException;
      void odstranVydavokMySql(int id,Connection connection) throws SQLException;
 
     // praca s modelom
-     void vlozVydavok (Vydavok vydavok);
+     Vydavok vlozVydavok ();
 
 
      // Vseobecne
      void vypisMenu();
      void vytlacDoPdf();
-     double sumaVydavkovAll(Connection conn);
+
+    void vytlacMySql2Pdf(Connection conn) throws SQLException, DocumentException, IOException;
+
+    double sumaVydavkovAll(Connection conn);
      int pocetPoloziek(Connection conn) throws SQLException;
 
 
