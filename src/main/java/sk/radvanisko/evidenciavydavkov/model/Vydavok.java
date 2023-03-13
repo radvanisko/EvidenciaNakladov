@@ -1,4 +1,4 @@
-package sk.radvanisko.evidencianakladov.model;
+package sk.radvanisko.evidenciavydavkov.model;
 
 
 import java.sql.Date;

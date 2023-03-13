@@ -1,9 +1,9 @@
-package sk.radvaniskoevidencianakladov;
+package sk.radvanisko.evidenciavydavkov;
 
 
 import com.itextpdf.text.DocumentException;
-import sk.radvanisko.evidencianakladov.model.Sluzby;
-import sk.radvanisko.evidencianakladov.model.Vydavok;
+import sk.radvanisko.evidenciavydavkov.model.Sluzby;
+import sk.radvanisko.evidenciavydavkov.model.Vydavok;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Scanner;
 
 
@@ -19,14 +20,30 @@ public class Main {
     public static void main(String[] args) throws SQLException, DocumentException, IOException {
 
         Connection conn = null;
+
+        try {
+            Class.forName("org.h2.Driver");
+        } catch (ClassNotFoundException e) {
+            System.out.println("problem s pripojenim");;
+        }
+
+
         String url = "jdbc:mysql://localhost:3306/vydavky";
         String username = "root";
         String password = "password";
+/*
+        String url = "jdbc:mysql://192.168.1.100:3306/vydavky.vydavky01";
+        String username = "root";
+        String password = "admin";
+*/
+
         System.out.println("Spájam sa s databázou ...");
 
         if (conn == null) { // vytvorili sme tzv. singleton
             conn = DriverManager.getConnection(url, username, password);
-            System.out.println("Databáza je pripojená!");
+//            conn = DriverManager.getConnection("jdbc:h2:C:\\Users\\radvanisko\\JavaProjekty\\Databaza/vydavky", "markus", "password");
+            System.out.println("Databaza pripojena" + conn);
+
         }
         Sluzby sluzby=new Sluzby();
         sluzby.vypisMenu();
@@ -36,6 +53,7 @@ public class Main {
 
 //        ArrayList<Vydavok> zoznamNakladov= TestovacieDataUtility.naplnTestovacimiUdajmi();
         ArrayList<Vydavok> zoznamVydavkov= new ArrayList<>();
+        HashMap <String, Double> vyber=new HashMap<String,Double>();
 
         while (true) {
             menuvolba = sc.next();
@@ -137,7 +155,35 @@ public class Main {
 
                     break;
 
+                case "5":
+
+                    vyber=sluzby.sumaVydavkovKategoria(conn);
+                    System.out.println(vyber);
+
+
+                    System.out.println("Zadaj svoju volbu:");
+                    break;
                 case "6":
+                    //vypis  suma podla konkretnej kategorie
+                    // zobrazi zoznam kategorii
+                    System.out.println("Zoznam kategorii :");
+                    System.out.println("---------------------------");
+                    vyber=sluzby.sumaVydavkovKategoria(conn);
+
+
+                    for ( String kat: vyber.keySet()) {
+                        System.out.println(kat);
+
+                    }
+                    System.out.println("---------------------------");
+                    Scanner sc6 = new Scanner(System.in);
+                    String kategoria="";
+                    System.out.println("Zadaj kategoriu vydavkov ");
+                    kategoria = sc6.nextLine();
+
+                    vyber=sluzby.sumaVydavkovKategoria(conn);
+                    System.out.println(vyber.get(kategoria));
+
 
                     System.out.println("Zadaj svoju volbu:");
                     break;

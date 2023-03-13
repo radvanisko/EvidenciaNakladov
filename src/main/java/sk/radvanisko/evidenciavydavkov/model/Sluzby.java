@@ -1,4 +1,4 @@
-package sk.radvanisko.evidencianakladov.model;
+package sk.radvanisko.evidenciavydavkov.model;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import com.itextpdf.text.*;
@@ -13,6 +14,7 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class Sluzby implements InterfaceSluzby {
+
 
 
 //    private Connection conn;
@@ -25,6 +27,7 @@ public class Sluzby implements InterfaceSluzby {
     @Override
     public void vlozVydavokMySql(Connection conn, Vydavok vydavok) throws SQLException {
         String query = "INSERT INTO vydavky.vydavky01 (popisvydavku, suma,datum,kategoria) VALUES (?, ?, ?, ?)";
+//        String query = "INSERT INTO vydavky (popisvydavku, suma,datum,kategoria) VALUES (?, ?, ?, ?)";
 
         PreparedStatement statement = conn.prepareStatement(query);
 
@@ -44,6 +47,7 @@ public class Sluzby implements InterfaceSluzby {
     public void aktualizujVydavokMySql(int id, Connection conn, Vydavok vydavok) throws SQLException {
 
        String query="UPDATE vydavky.vydavky01 SET popisvydavku = ?, suma = ?, datum = ?, kategoria = ?  WHERE id = ?";
+//        String query="UPDATE vydavky SET popisvydavku = ?, suma = ?, datum = ?, kategoria = ?  WHERE id = ?";
 
         PreparedStatement statement = conn.prepareStatement(query);
 
@@ -63,6 +67,7 @@ public class Sluzby implements InterfaceSluzby {
     public ArrayList<Vydavok> vyberVsetkyMySql(Connection conn) throws SQLException {
 
         String sql = "SELECT * FROM vydavky01";
+//        String sql = "SELECT * FROM vydavky";
         PreparedStatement statement = conn.prepareStatement(sql);
         ResultSet result = statement.executeQuery();
 //        int id = 1;
@@ -87,7 +92,10 @@ public class Sluzby implements InterfaceSluzby {
 
     @Override
     public void odstranVydavokMySql(int id, Connection connection) throws SQLException {
+
         String sql = "DELETE FROM vydavky.vydavky01 WHERE id = ?";
+//        String sql = "DELETE FROM vydavky WHERE id = ?";
+
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setInt(1, id);
         statement.executeUpdate();
@@ -137,18 +145,19 @@ public class Sluzby implements InterfaceSluzby {
     public void vypisMenu() {
 
         System.out.println();
-        System.out.println(" ---------- EVIDENCIA VYDAVKOV ---------");
-        System.out.println("---------------------------------------------------");
-        System.out.println("MENU>      (m)= MENU,....                     (q)= quit : ");
-        System.out.println("---------------------------------------------------");
-        System.out.println("MENU>      (1)= Zadaj novu položku            (q)= quit : ");
-        System.out.println("MENU>      (2)= Vypíš zoznam položiek         (q)= quit : ");
-        System.out.println("MENU>      (3)= Spočítaj sumu položiek        (q)= quit : ");
-        System.out.println("MENU>      (4)=Oprav záznam (ID)              (q)= quit : ");
-//        System.out.println("MENU>      (6)=                             (q)= quit : ");
-        System.out.println("MENU>      (7)= Vytlač do PDF                 (q)= quit : ");
+        System.out.println(" ---------- EVIDENCIA VYDAVKOV --------------------------------");
+        System.out.println("---------------------------------------------------------------");
+        System.out.println("MENU>      (m)= MENU,....                          (q)= quit : ");
+        System.out.println("---------------------------------------------------------------");
+        System.out.println("MENU>      (1)= Zadaj novu položku                 (q)= quit : ");
+        System.out.println("MENU>      (2)= Vypíš zoznam položiek              (q)= quit : ");
+        System.out.println("MENU>      (3)= Spočítaj sumu položiek             (q)= quit : ");
+        System.out.println("MENU>      (4)= Oprav záznam (ID)                  (q)= quit : ");
+        System.out.println("MENU>      (5)= Spočítaj sumy všetkých kategórii   (q)= quit : ");
+        System.out.println("MENU>      (6)= Spočítaj sumu jednej kategórie     (q)= quit : ");
+        System.out.println("MENU>      (7)= Vytlač do PDF                      (q)= quit : ");
 //
-        System.out.println("MENU>      (8)=Vymaž konkrétny záznam (ID)    (q)= quit : ");
+        System.out.println("MENU>      (8)=Vymaž konkrétny záznam (ID)        (q)= quit : ");
 //        System.out.println("MENU>      (9)=                             (q)= quit : ");
 //        System.out.println("MENU>      (0)=                             (q)= quit : ");
 
@@ -179,10 +188,10 @@ public class Sluzby implements InterfaceSluzby {
         Document document = new Document(); // vytvorime prazdny PDF Dokument
 
 
-        String unicodeFontPath="C:\\Windows\\Fonts\\Tahoma.ttf";
+        String unicodeFontPath="C:/Windows/Fonts/Tahoma.ttf";
         BaseFont unicode = BaseFont.createFont(unicodeFontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-        Font font = new Font(unicode, 14, Font.NORMAL);
-        Font fontNadpis = new Font(unicode, 20, Font.BOLD);
+        Font font = new Font(unicode, 12, Font.NORMAL);
+        Font fontNadpis = new Font(unicode, 18, Font.BOLD);
 
 //        font=new Font(Font.FontFamily.TIMES_ROMAN, 20);
 
@@ -192,7 +201,7 @@ public class Sluzby implements InterfaceSluzby {
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("report_vydavkov" + dnesnydatum+".pdf" ));
             document.open(); // dokument musime ho otvorit
 //            document.add(new Header
-            document.add(new Paragraph("Zoznam výdavkov :  +ľščťžýáíéà. ",fontNadpis)); // do dokumentu vpiseme text  PDF documentu
+            document.add(new Paragraph("Zoznam výdavkov :   ",fontNadpis)); // do dokumentu vpiseme text  PDF documentu
 
             for (Vydavok vystup: vydavky) {
                 document.add(new Paragraph(String.format("%-5s %15s   %7s %12s %12s", vystup.getId(),vystup.getPopisVydavku(),vystup.getSuma(),vystup.getDatum(),vystup.getDatum()),font));
@@ -219,6 +228,8 @@ public class Sluzby implements InterfaceSluzby {
     public double sumaVydavkovAll(Connection conn) {
 
         String query = "SELECT SUM(suma) AS sucet FROM  vydavky01;";
+//        String query = "SELECT SUM(suma) AS sucet FROM  vydavky;";
+
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet resultSet = stmt.executeQuery(query);
@@ -237,11 +248,36 @@ public class Sluzby implements InterfaceSluzby {
     public int pocetPoloziek(Connection conn) throws SQLException {
         int pocet = 0;
         String query = "SELECT COUNT(*) AS pocet FROM  vydavky.vydavky01";
+//        String query = "SELECT SUM(suma) AS sucet FROM  vydavky;";
         PreparedStatement stmt = conn.prepareStatement(query);
         ResultSet resultSet = stmt.executeQuery(query);
         resultSet.next();
         pocet= resultSet.getInt("pocet");
         return pocet;
    }
+
+    @Override
+    public HashMap sumaVydavkovKategoria(Connection conn) throws SQLException {
+
+//        String query ="SELECT kategoria, SUM(suma)AS 'Suma podľa kategorie' FROM vydavky01 GROUP BY kategoria";
+        String query ="SELECT kategoria, SUM(suma)AS 'Suma podľa kategorie' FROM vydavky GROUP BY kategoria";
+        PreparedStatement statement=conn.prepareStatement(query);
+        ResultSet result = statement.executeQuery();
+
+        HashMap <String, Double> vyber=new HashMap<String,Double>();
+
+        while (result.next()) {
+            vyber.put(result.getString("kategoria"), result.getDouble("Suma podľa kategorie"));
+        }
+
+        return vyber;
+
+    }
+
+
+    // QUERY EXAMPLES
+    //        SELECT kategoria, SUM(suma) FROM vydavky01 GROUP BY kategoria;
+    //    SELECT kategoria, SUM(suma)AS 'Suma podľa kategorie' FROM vydavky01 GROUP BY kategoria;
+
 
 }

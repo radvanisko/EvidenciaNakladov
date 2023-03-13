@@ -20,4 +20,35 @@
             <version>5.5.13.3</version>
         </dependency>
     </dependencies>
+
+<build>
+<plugins>
+    <plugin>
+        <groupId>com.itextpdf</groupId>
+        <artifactId>itextpdf</artifactId>
+        <version>5.5.13.3</version>
+        <configuration>
+            <finalName>ServiceCreate</finalName>
+            <appendAssemblyId>false</appendAssemblyId>
+            <archive>
+                <manifest>
+                    <mainClass>sk.radvanisko.evidenciavydavkov.Main</mainClass>
+                </manifest>
+            </archive>
+            <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+        </configuration>
+    </plugin>
+    <plugin>
+        <groupId>com.itextpdf</groupId>
+        <artifactId>itextpdf</artifactId>
+        <version>5.5.13.3</version>
+        <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+        </configuration>
+    </plugin>
+</plugins>
+</build>
 </project>

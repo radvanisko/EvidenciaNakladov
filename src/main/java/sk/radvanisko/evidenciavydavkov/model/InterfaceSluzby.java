@@ -1,12 +1,12 @@
-package sk.radvanisko.evidencianakladov.model;
+package sk.radvanisko.evidenciavydavkov.model;
 
 import com.itextpdf.text.DocumentException;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface InterfaceSluzby {
 
@@ -30,6 +30,8 @@ public interface InterfaceSluzby {
 
     double sumaVydavkovAll(Connection conn);
      int pocetPoloziek(Connection conn) throws SQLException;
+
+     HashMap <String, Double> sumaVydavkovKategoria (Connection conn)throws SQLException;;
 
 
 
