@@ -18,7 +18,7 @@ public class MainGui {
 
 
         Sluzby sluzby=new Sluzby();
-        DefaultTableModel daDefaultTableModel = new DefaultTableModel(2, 4);
+        DefaultTableModel daDefaultTableModel = new DefaultTableModel(0, 0);
 
 //      Object data[][] = null;
         Object data[][] = { { "", "","",""},  { "", "", "",""} };
@@ -63,9 +63,9 @@ public class MainGui {
         frame.setVisible(true);
 
 
-        scrollPane.setBounds(100, 40, 500, 500);
+//        scrollPane.setBounds(100, 40, 500, 500);
         vydavkyGui.paneltable.add(scrollPane);
-//        vydavkyGui.panelHlavny.add(table1);
+
 
         // vytvaranie prippojenia na Databazu
 
