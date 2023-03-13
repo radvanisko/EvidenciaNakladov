@@ -18,58 +18,51 @@ public class MainGui {
 
 
         Sluzby sluzby=new Sluzby();
-
+        DefaultTableModel daDefaultTableModel = new DefaultTableModel(2, 4);
 
 //      Object data[][] = null;
         Object data[][] = { { "", "","",""},  { "", "", "",""} };
         Object columnNames[] = {"Popis vydavku", "Suma", "Datum ", "Kategoria"};
 
+
         JTable table1=new JTable();
-        JPanel paneltable=new JPanel();
 
         JTableHeader header = table1.getTableHeader();
         table1 = new JTable(data, columnNames);
-        DefaultTableModel daDefaultTableModel = new DefaultTableModel(0, 0);
         daDefaultTableModel.setColumnIdentifiers(columnNames);
         table1.setModel(daDefaultTableModel);
 
+        VydavkyGui vydavkyGui=new VydavkyGui();
 
-
-        VydavkyGui vydavkyGui=new VydavkyGui(table1);
-
-        paneltable.setLayout(new BorderLayout());
-        paneltable.add(header, BorderLayout.NORTH);
-        paneltable.add(table1, BorderLayout.CENTER);
-        paneltable.updateUI();
-
+        vydavkyGui.paneltable.setLayout(new BorderLayout());
+        vydavkyGui.paneltable.add(header, BorderLayout.NORTH);
+        vydavkyGui.paneltable.add(table1, BorderLayout.CENTER);
+        vydavkyGui.paneltable.updateUI();
 
 
 
-//        scrollPane.setBounds(10, 38, 414, 212);
 
 // generovanie dummy riadkov
         for (int i = 1; i <20; i++) {
             daDefaultTableModel.addRow(new Object[] {"Popis"+(i),100-2*i,"15-3-2023","kategoria"});
         }
-
         table1.updateUI();
 
 
         JFrame frame= new JFrame("Zoznam vydavkov");
         frame.setContentPane(vydavkyGui.panelHlavny);
+        JScrollPane scrollPane = new JScrollPane(table1);
 
-
-        frame.setMinimumSize(new Dimension(500,700));
+        frame.setMinimumSize(new Dimension(700,700));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null); // vycentrovanie okna
         frame.pack();
         frame.setVisible(true);
 
-        JScrollPane scrollPane = new JScrollPane(table1);
-        scrollPane.setBounds(10, 38, 414, 212);
-//        paneltable.add(table1);
-        paneltable.add(scrollPane);
 
+        scrollPane.setBounds(100, 40, 500, 500);
+        vydavkyGui.paneltable.add(scrollPane);
+//        vydavkyGui.panelHlavny.add(table1);
 
         // vytvaranie prippojenia na Databazu
 
