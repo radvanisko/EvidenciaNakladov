@@ -43,10 +43,13 @@ public class MainGui {
 
 
 // generovanie dummy riadkov
+
+/*
         for (int i = 1; i <20; i++) {
             daDefaultTableModel.addRow(new Object[] {"Popis"+(i),100-2*i,"15-3-2023","kategoria"});
         }
         table1.updateUI();
+*/
 
 
         JFrame frame= new JFrame("Zoznam vydavkov");
@@ -82,6 +85,11 @@ public class MainGui {
         ArrayList<Vydavok> vydavky = new ArrayList<Vydavok>();
 
         vydavky=sluzby.vyberVsetkyMySql(conn);  //naplnil som arraylist vydavky z dtb
+
+        for (Vydavok zoznam: vydavky) {
+            daDefaultTableModel.addRow(new Object[] {zoznam.getPopisVydavku(),zoznam.getSuma(),zoznam.getDatum(),zoznam.getKategoria()});
+        }
+        table1.updateUI();
 
 
 
