@@ -86,16 +86,12 @@ public class MainGui {
 
         vydavky=sluzby.vyberVsetkyMySql(conn);  //naplnil som arraylist vydavky z dtb
 
+
+        //naplnenie tabulky z arraylistu
         for (Vydavok zoznam: vydavky) {
             daDefaultTableModel.addRow(new Object[] {zoznam.getPopisVydavku(),zoznam.getSuma(),zoznam.getDatum(),zoznam.getKategoria()});
         }
         table1.updateUI();
-
-
-
-
-
-
 
     }
 }

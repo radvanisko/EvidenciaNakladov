@@ -38,6 +38,12 @@ public class VydavkyGui {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                ZadajNovy dialog = new ZadajNovy();
+                dialog.pack();
+                dialog.setLocationRelativeTo(null); // vycentrovanie okna
+                dialog.setVisible(true);
+//                System.exit(0);
+
             }
         });
 
