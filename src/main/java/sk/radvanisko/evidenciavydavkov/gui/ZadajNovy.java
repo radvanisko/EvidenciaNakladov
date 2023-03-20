@@ -23,8 +23,8 @@ public class ZadajNovy extends JDialog {
     private final VydavkyGui vydavkyGui;
 
     public ZadajNovy(VydavkyGui vydavkyGui) {
-
         this.vydavkyGui = vydavkyGui;
+
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -70,18 +70,14 @@ public class ZadajNovy extends JDialog {
 
         // vlozenie do objektu novy vydavok
         Vydavok novyvydavok=new Vydavok();
+        novyvydavok.setPopisVydavku(textField1.getText());
 
+        novyvydavok.setSuma(Double.parseDouble(textField2.getText())); //treba osetrit
 
-            novyvydavok.setPopisVydavku(textField1.getText());
-
-            novyvydavok.setSuma(Double.parseDouble(textField2.getText())); //treba osetrit
-
-//        novyvydavok.setDatum(textField3.getText());
+//      novyvydavok.setDatum(textField3.getText());  //datum
         novyvydavok.setKategoria(textField4.getText());
 
-
         // vytvaranie prippojenia na Databazu
-
         Connection conn = null;
         String url = "jdbc:mysql://localhost:3306/vydavky";
         String username = "root";
@@ -96,18 +92,18 @@ public class ZadajNovy extends JDialog {
 
 
         sluzby.vlozVydavokMySql(conn,novyvydavok);  //vloz do databazy conn
-
         JTable table1 = vydavkyGui.getTable1();
 
-        // novyvydavok.getId() toto asi nie v objekte
+        int poslednyzaznam= sluzby.cisloposlednyZaznam(conn);
+        novyvydavok.setId(poslednyzaznam);
 
-//todo aktualiyovat tabulku
+
         System.out.println(novyvydavok.getId()+novyvydavok.getPopisVydavku()+novyvydavok.getSuma()+novyvydavok.getKategoria());
 
         Object[] data = {novyvydavok.getId(),novyvydavok.getPopisVydavku(), novyvydavok.getSuma(), novyvydavok.getDatum(), novyvydavok.getKategoria()};
         DefaultTableModel model = (DefaultTableModel) table1.getModel();
         model.addRow(data);
-        table1.updateUI();
+//      table1.updateUI();
 
         dispose();
     }

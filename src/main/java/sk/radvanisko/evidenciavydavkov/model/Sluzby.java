@@ -280,4 +280,14 @@ public class Sluzby implements InterfaceSluzby {
     //    SELECT kategoria, SUM(suma)AS 'Suma podľa kategorie' FROM vydavky01 GROUP BY kategoria;
 
 
+    @Override
+    public int cisloposlednyZaznam(Connection conn) throws SQLException {
+      int posledny;
+    String query= "SELECT * FROM vydavky.vydavky01 WHERE id=(SELECT MAX(id) FROM vydavky01)";
+    PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet resultSet = stmt.executeQuery(query);
+        resultSet.next();
+        posledny= resultSet.getInt("id");
+        return posledny;
+    }
 }

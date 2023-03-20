@@ -31,6 +31,10 @@ public interface InterfaceSluzby {
     double sumaVydavkovAll(Connection conn);
      int pocetPoloziek(Connection conn) throws SQLException;
 
+     int cisloposlednyZaznam (Connection conn) throws SQLException;
+
+
+
      HashMap <String, Double> sumaVydavkovKategoria (Connection conn)throws SQLException;;
 
 
