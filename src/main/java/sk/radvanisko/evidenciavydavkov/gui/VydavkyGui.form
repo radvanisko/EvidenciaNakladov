@@ -20,28 +20,28 @@
         <properties/>
         <border type="empty" title="Prikazy"/>
         <children>
-          <component id="1b563" class="javax.swing.JButton" binding="button4" default-binding="true">
+          <component id="1b563" class="javax.swing.JButton" binding="zmažVýdavokButton" default-binding="true">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Button"/>
+              <text value="Zmaž výdavok"/>
             </properties>
           </component>
-          <component id="d25c" class="javax.swing.JButton" binding="button1" default-binding="true">
+          <component id="d25c" class="javax.swing.JButton" binding="editujButton" default-binding="true">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Button"/>
+              <text value="edituj"/>
             </properties>
           </component>
-          <component id="d4c96" class="javax.swing.JButton" binding="button2" default-binding="true">
+          <component id="d4c96" class="javax.swing.JButton" binding="vytlačPdfButton" default-binding="true">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Button"/>
+              <text value="Vytlač pdf"/>
             </properties>
           </component>
           <component id="9fd9d" class="javax.swing.JButton" binding="zadajVýdavokButton" default-binding="true">

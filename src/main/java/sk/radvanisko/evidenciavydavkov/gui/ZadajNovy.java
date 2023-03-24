@@ -72,7 +72,11 @@ public class ZadajNovy extends JDialog {
         Vydavok novyvydavok=new Vydavok();
         novyvydavok.setPopisVydavku(textField1.getText());
 
-        novyvydavok.setSuma(Double.parseDouble(textField2.getText())); //treba osetrit
+        try {
+            novyvydavok.setSuma(Double.parseDouble(textField2.getText()));
+        } catch (NumberFormatException e) {
+            novyvydavok.setSuma(0);
+        }
 
 //      novyvydavok.setDatum(textField3.getText());  //datum
         novyvydavok.setKategoria(textField4.getText());

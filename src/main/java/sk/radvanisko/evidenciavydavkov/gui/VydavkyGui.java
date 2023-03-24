@@ -3,15 +3,18 @@
 
 package sk.radvanisko.evidenciavydavkov.gui;
 
+import com.itextpdf.text.DocumentException;
 import sk.radvanisko.evidenciavydavkov.model.Sluzby;
 import sk.radvanisko.evidenciavydavkov.model.Vydavok;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -21,10 +24,10 @@ public class VydavkyGui {
 
     JPanel panelHlavny;
     private JTable table1;
-    private JButton button4;
+    private JButton zmažVýdavokButton;
     private JButton zadajVýdavokButton;
-    private JButton button1;
-    private JButton button2;
+    private JButton editujButton;
+    private JButton vytlačPdfButton;
     private JPanel panelButtony;
     private JPanel panel3;
     private JLabel label;
@@ -83,6 +86,15 @@ public class VydavkyGui {
         paneltable.add(scrollPane);
 
 
+        //  nastavenie sirky stlpcov
+        table1.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
+        TableColumnModel colModel=table1.getColumnModel();
+        colModel.getColumn(0).setPreferredWidth(5);
+        colModel.getColumn(1).setPreferredWidth(150);
+        colModel.getColumn(2).setPreferredWidth(20);
+        colModel.getColumn(3).setPreferredWidth(50);
+
+
         // vytvaranie prippojenia na Databazu
 
         Connection conn = null;
@@ -92,8 +104,8 @@ public class VydavkyGui {
 
         if (conn == null) { // vytvorili sme tzv. singleton
             conn = DriverManager.getConnection(url, username, password);
-            System.out.println("Databáza je pripojená!");
-            getLabel().setText("Databaza je pripojena");
+            System.out.println("Databáza MySql je pripojená!");
+            getLabel().setText("Databaza MySql je pripojena");
         }
         //-----------------------------------------------------
 
@@ -121,6 +133,73 @@ public class VydavkyGui {
             }
         });
 
+        Connection finalConn = conn;
+        vytlačPdfButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    sluzby.vytlacMySql2Pdf(finalConn);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                } catch (DocumentException ex) {
+                    throw new RuntimeException(ex);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                JOptionPane.showMessageDialog (null, "Súbor bol  vytvorený", "Tlač zoznamu do pdf", JOptionPane.INFORMATION_MESSAGE);
+
+
+
+
+            }
+        });
+        editujButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog (null, "Editovanie, alebo ina funkcia", "Nazov funkcie", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        zmažVýdavokButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                int id=0; int row=0;int column = 0;
+
+                row = table1.getSelectedRow();
+//                System.out.println("Nastavenie :  " + row + column + id);
+
+
+              if ((row<0))
+                {JOptionPane.showMessageDialog (null, "Zvoľ si prosím zaznam, ktorý chceš vymazať", "Vymaž záznam", JOptionPane.INFORMATION_MESSAGE);}
+              else {
+                  id = (int) table1.getModel().getValueAt(row, column);
+
+                  int input=JOptionPane.showConfirmDialog (null, " Naozaj chceš zmazať záznam s číslom :  " + id, "Vymaž záznam", JOptionPane.OK_CANCEL_OPTION);
+                  System.out.println(input);
+
+                  if (input==0) {
+                      try {
+                          sluzby.odstranVydavokMySql( id,finalConn);
+                          row = table1.getSelectedRow();
+                          System.out.println("rekord :  " +id + "\n" + "row v tabulke : " + row);
+                          //todo ako aktualizovať tabulku po vymazani
+
+
+//                           DefaultTableModel model = (DefaultTableModel) table1.getModel();
+                          ((DefaultTableModel)table1.getModel()).removeRow(row);
+
+
+                      } catch (SQLException ex) {
+                          System.out.println("Zaznam sa nezmazal, nie je pripojenia databaza");;
+                      }
+                  }
+
+
+              }
+            }
+        });
     }
 
 

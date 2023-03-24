@@ -1,5 +1,7 @@
 package sk.radvanisko.evidenciavydavkov.model;
 
+import java.awt.*;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -211,6 +214,17 @@ public class Sluzby implements InterfaceSluzby {
 
             document.close(); // zatvorime dokument
             writer.close(); // zatvorime subor
+
+            if (Desktop.isDesktopSupported()) {
+                try {
+                    File myFile = new File("report_vydavkov" + dnesnydatum+ ".pdf");
+                    Desktop.getDesktop().open(myFile);
+                } catch (IOException ex) {
+                    // no application registered for PDFs
+                }
+            }
+
+
         } catch (DocumentException e) {
             System.out.println("Nastal problém s vytváraním dokumentu");
         } catch (FileNotFoundException e) {
