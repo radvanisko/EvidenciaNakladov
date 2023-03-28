@@ -213,7 +213,7 @@ public class Sluzby implements InterfaceSluzby {
     @Override
     public void vytlacMySql2Pdf(Connection conn) throws SQLException, DocumentException, IOException {
         ArrayList<Vydavok> vydavky =new ArrayList<Vydavok>();
-        int pocet =pocetPoloziek(conn);
+        int pocet =pocetPoloziekH2(conn);
         double sucet= sumaVydavkovAll(conn);
 
         vydavky=vyberVsetkyMySql(conn);
@@ -223,8 +223,6 @@ public class Sluzby implements InterfaceSluzby {
 
         // START - generovanie PDF
         Document document = new Document(); // vytvorime prazdny PDF Dokument
-
-
         String unicodeFontPath="C:/Windows/Fonts/Tahoma.ttf";
         BaseFont unicode = BaseFont.createFont(unicodeFontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
         Font font = new Font(unicode, 12, Font.NORMAL);
@@ -245,7 +243,6 @@ public class Sluzby implements InterfaceSluzby {
 //                System.out.println(String.format("%-5s %15s   %7s %12s %12s", "ID",vystup.getPopisVydavku(),vystup.getSuma(),vystup.getDatum(),vystup.getDatum()));
             }
             document.add(new Paragraph("Suma výdavkov je: "+ sucet + "  Počet položiek je:  " +pocet,fontNadpis));
-
             document.close(); // zatvorime dokument
             writer.close(); // zatvorime subor
 
@@ -275,12 +272,12 @@ public class Sluzby implements InterfaceSluzby {
     @Override
     public double sumaVydavkovAll(Connection conn) {
 
-        String query = "SELECT SUM(suma) AS sucet FROM  vydavky01;";
+        String query = "SELECT SUM(suma) AS sucet FROM  vydavky.vydavky01;";
 //        String query = "SELECT SUM(suma) AS sucet FROM  vydavky;";
 
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet resultSet = stmt.executeQuery(query);
+            ResultSet resultSet = stmt.executeQuery(); //uprava pre H2
             if (resultSet.next()) {
                 double sucet = resultSet.getDouble("sucet");
                 return sucet;
@@ -303,6 +300,17 @@ public class Sluzby implements InterfaceSluzby {
         pocet= resultSet.getInt("pocet");
         return pocet;
    }
+
+    @Override
+    public int pocetPoloziekH2(Connection conn) throws SQLException {
+        int pocet = 0;
+        String query = "SELECT COUNT(*) AS pocet FROM  vydavky.vydavky01";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet resultSet = stmt.executeQuery();
+        resultSet.next();
+        pocet= resultSet.getInt("pocet");
+        return pocet;
+    }
 
     @Override
     public HashMap sumaVydavkovKategoria(Connection conn) throws SQLException {

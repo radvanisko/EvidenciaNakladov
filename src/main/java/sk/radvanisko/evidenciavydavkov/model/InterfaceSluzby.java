@@ -32,6 +32,7 @@ public interface InterfaceSluzby {
 
     double sumaVydavkovAll(Connection conn);
      int pocetPoloziek(Connection conn) throws SQLException;
+    int pocetPoloziekH2(Connection conn) throws SQLException;
 
      int cisloposlednyZaznam (Connection conn) throws SQLException;
     int cisloposlednyZaznamH2(Connection conn) throws SQLException;
