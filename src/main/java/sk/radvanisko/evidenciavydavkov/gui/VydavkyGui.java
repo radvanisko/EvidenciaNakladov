@@ -94,22 +94,17 @@ public class VydavkyGui {
         colModel.getColumn(2).setPreferredWidth(20);
         colModel.getColumn(3).setPreferredWidth(50);
 
-
-        // vytvaranie prippojenia na Databazu
-
-        Connection conn = null;
-        String url = "jdbc:mysql://localhost:3306/vydavky";
-        String username = "root";
-        String password = "password";
-
-        if (conn == null) { // vytvorili sme tzv. singleton
-            conn = DriverManager.getConnection(url, username, password);
-            System.out.println("Databáza MySql je pripojená!");
-            getLabel().setText("Databaza MySql je pripojena");
-        }
-        //-----------------------------------------------------
-
+        //otvorenie databazy
         Sluzby sluzby = new Sluzby();
+
+//        Connection conn=sluzby.otvorDatabazu(); //MySQL
+        Connection conn=sluzby.otvorH2(); // H2
+
+
+        getLabel().setText("Databaza H2 je pripojena");
+
+
+
         ArrayList<Vydavok> vydavky = new ArrayList<Vydavok>();
         vydavky = sluzby.vyberVsetkyMySql(conn);  //naplnil som arraylist vydavky z dtb
 
@@ -184,11 +179,9 @@ public class VydavkyGui {
                           sluzby.odstranVydavokMySql( id,finalConn);
                           row = table1.getSelectedRow();
                           System.out.println("rekord :  " +id + "\n" + "row v tabulke : " + row);
-                          //todo ako aktualizovať tabulku po vymazani
-
 
 //                           DefaultTableModel model = (DefaultTableModel) table1.getModel();
-                          ((DefaultTableModel)table1.getModel()).removeRow(row);
+                          ((DefaultTableModel)table1.getModel()).removeRow(row);  // zmaze riadok z tabulky
 
 
                       } catch (SQLException ex) {
@@ -214,4 +207,26 @@ public class VydavkyGui {
         frame.setVisible(true);
 
     }
+
+
+
+
 }
+
+
+
+//---------------------------------------------------------------------------
+
+  /*  // vytvaranie prippojenia na Databazu
+
+    Connection conn = null;
+    String url = "jdbc:mysql://localhost:3306/vydavky";
+    String username = "root";
+    String password = "password";
+
+        if (conn == null) { // vytvorili sme tzv. singleton
+                conn = DriverManager.getConnection(url, username, password);
+                System.out.println("Databáza MySql je pripojená!");
+                getLabel().setText("Databaza MySql je pripojena");
+                }
+//-----------------------------------------------------*/

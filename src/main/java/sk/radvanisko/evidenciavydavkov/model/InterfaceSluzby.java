@@ -13,6 +13,8 @@ public interface InterfaceSluzby {
     // MySql  CRUD
     void vlozVydavokMySql(Connection conn,Vydavok vydavok) throws SQLException;
 
+    void vlozVydavokH2(Connection conn,Vydavok vydavok) throws SQLException;
+
 
     void aktualizujVydavokMySql (int id, Connection conn,Vydavok vydavok) throws SQLException;
      ArrayList<Vydavok> vyberVsetkyMySql(Connection conn) throws SQLException;
@@ -32,6 +34,12 @@ public interface InterfaceSluzby {
      int pocetPoloziek(Connection conn) throws SQLException;
 
      int cisloposlednyZaznam (Connection conn) throws SQLException;
+    int cisloposlednyZaznamH2(Connection conn) throws SQLException;
+
+     Connection otvorDatabazu () throws SQLException;
+
+     Connection otvorH2 () throws SQLException;
+
 
 
 

@@ -14,5 +14,6 @@
     <orderEntry type="library" name="Maven: com.itextpdf:itextpdf:5.5.13.3" level="project" />
     <orderEntry type="library" name="Maven: com.mysql:mysql-connector-j:8.0.32" level="project" />
     <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:3.21.9" level="project" />
+    <orderEntry type="library" name="h2-2.1.214" level="project" />
   </component>
 </module>

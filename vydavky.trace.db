@@ -1,0 +1,27 @@
+2023-03-27 20:25:36 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Schéma "VYDAVKY" nenájdená
+Schema "VYDAVKY" not found; SQL statement:
+SELECT * FROM vydavky.vydavky01 [90079-214]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:632)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:477)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.command.Parser.readTablePrimary(Parser.java:1833)
+	at org.h2.command.Parser.readTableReference(Parser.java:2334)
+	at org.h2.command.Parser.parseSelectFromPart(Parser.java:2772)
+	at org.h2.command.Parser.parseSelect(Parser.java:2878)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2762)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2633)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2612)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2605)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2598)
+	at org.h2.command.Parser.parseQuery(Parser.java:2567)
+	at org.h2.command.Parser.parsePrepared(Parser.java:724)
+	at org.h2.command.Parser.parse(Parser.java:689)
+	at org.h2.command.Parser.parse(Parser.java:661)
+	at org.h2.command.Parser.prepareCommand(Parser.java:569)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:631)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:554)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at Main.main(Main.java:24)

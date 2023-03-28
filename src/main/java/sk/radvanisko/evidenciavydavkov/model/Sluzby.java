@@ -29,21 +29,51 @@ public class Sluzby implements InterfaceSluzby {
 
     @Override
     public void vlozVydavokMySql(Connection conn, Vydavok vydavok) throws SQLException {
-        String query = "INSERT INTO vydavky.vydavky01 (popisvydavku, suma,datum,kategoria) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO VYDAVKY.VYDAVKY01 (popisvydavku, suma,datum,kategoria) VALUES (?, ?, ?, ?)";
 //        String query = "INSERT INTO vydavky (popisvydavku, suma,datum,kategoria) VALUES (?, ?, ?, ?)";
 
-        PreparedStatement statement = conn.prepareStatement(query);
+        PreparedStatement pstmt = conn.prepareStatement(query);
 
-        statement.setString(1, vydavok.getPopisVydavku());
-        statement.setDouble(2, vydavok.getSuma());
-        statement.setDate(3, vydavok.getDatum());
-        statement.setString(4, vydavok.getKategoria());
-        
+        pstmt.setString(1, vydavok.getPopisVydavku());
+        pstmt.setDouble(2, vydavok.getSuma());
+        pstmt.setDate(3, vydavok.getDatum());
+        pstmt.setString(4, vydavok.getKategoria());
+//        pstmt.executeQuery();
+        pstmt.executeUpdate();
+
         System.out.println(String.format("%-5s %15s   %7s %12s %12s", vydavok.getId(),vydavok.getPopisVydavku(),vydavok.getSuma(),vydavok.getDatum(),vydavok.getKategoria()));
+//        System.out.println(rs.next());
 
-        statement.executeUpdate();
+    }
+
+    @Override
+    public void vlozVydavokH2(Connection conn, Vydavok vydavok) throws SQLException {
+        String query = "INSERT INTO VYDAVKY.VYDAVKY01 (popisvydavku, suma,datum,kategoria) VALUES (?,?,?,?)";
+        PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+
+//        Statement stmt = conn.createStatement();
+//        ResultSet result = stmt.executeQuery(query);
 
 
+// Get the generated primary key value
+
+        ResultSet rs = pstmt.getGeneratedKeys();
+
+        if (rs.next()) {
+            int id = 0;
+            id = rs.getInt(0);
+            System.out.println("Inserted record with ID: " + id);
+            System.out.println(String.format("%-5s %15s   %7s %12s %12s", vydavok.getId(), vydavok.getPopisVydavku(), vydavok.getSuma(), vydavok.getDatum(), vydavok.getKategoria()));
+        }
+//        pstmt.setInt(0, pstmt.RETURN_GENERATED_KEYS);
+        pstmt.setString(1, vydavok.getPopisVydavku());
+        pstmt.setDouble(2, vydavok.getSuma());
+        pstmt.setDate(3, vydavok.getDatum());
+        pstmt.setString(4, vydavok.getKategoria());
+        pstmt.executeUpdate();
+
+
+        System.out.println(String.format("%-5s %15s   %7s %12s %12s", vydavok.getId(), vydavok.getPopisVydavku(), vydavok.getSuma(), vydavok.getDatum(), vydavok.getKategoria()));
     }
 
     @Override
@@ -69,10 +99,14 @@ public class Sluzby implements InterfaceSluzby {
     @Override
     public ArrayList<Vydavok> vyberVsetkyMySql(Connection conn) throws SQLException {
 
-        String sql = "SELECT * FROM vydavky01";
+        String sql = "SELECT * FROM vydavky.vydavky01;";
 //        String sql = "SELECT * FROM vydavky";
-        PreparedStatement statement = conn.prepareStatement(sql);
-        ResultSet result = statement.executeQuery();
+//        PreparedStatement statement = conn.prepareStatement(sql);
+//        ResultSet result = statement.executeQuery();
+
+        Statement stmt = conn.createStatement();
+        ResultSet result = stmt.executeQuery(sql);
+
 //        int id = 1;
 
         ArrayList<Vydavok> zoznam = new ArrayList<Vydavok>();
@@ -297,11 +331,62 @@ public class Sluzby implements InterfaceSluzby {
     @Override
     public int cisloposlednyZaznam(Connection conn) throws SQLException {
       int posledny;
-    String query= "SELECT * FROM vydavky.vydavky01 WHERE id=(SELECT MAX(id) FROM vydavky01)";
+    String query= "SELECT * FROM vydavky.vydavky01 WHERE id=(SELECT MAX(id) FROM vydavky.vydavky01)";
     PreparedStatement stmt = conn.prepareStatement(query);
         ResultSet resultSet = stmt.executeQuery(query);
         resultSet.next();
         posledny= resultSet.getInt("id");
         return posledny;
     }
+
+    @Override
+    public int cisloposlednyZaznamH2(Connection conn) throws SQLException {
+        int posledny;
+        String query= "SELECT * FROM vydavky.vydavky01 WHERE id=(SELECT MAX(id) FROM vydavky.vydavky01)";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet resultSet = stmt.executeQuery();
+        resultSet.next();
+        posledny= resultSet.getInt("id");
+        return posledny;
+
+/*
+        Statement stmt = conn.createStatement();
+        ResultSet result = stmt.executeQuery(query);
+*/
+
+
+    }
+
+
+
+
+    @Override
+    public Connection otvorDatabazu() throws SQLException {
+
+        // vytvaranie prippojenia na Databazu
+
+        Connection conn = null;
+        String url = "jdbc:mysql://localhost:3306/vydavky";
+        String username = "root";
+        String password = "password";
+
+        if (conn == null) { // vytvorili sme tzv. singleton
+            conn = DriverManager.getConnection(url, username, password);
+            System.out.println("Databáza MySql je pripojená!");
+//            getLabel().setText("Databaza MySql je pripojena");
+        }
+        //-----------------------------------------------------
+        return conn;
+    }
+
+    @Override
+    public Connection otvorH2() throws SQLException {
+
+        Connection conn = DriverManager.getConnection("jdbc:h2:C:\\Users\\radvanisko\\JavaProjekty\\EvidenciaNakladov\\EvidenciaNakladov\\databaza\\vydavky","sa","");
+        /*if (conn == null) { // vytvorili sme tzv. singleton
+            conn = DriverManager.getConnection(url, username, password);*/
+            System.out.println("Databáza H2  je pripojená!");
+        return conn;
+    }
+
 }

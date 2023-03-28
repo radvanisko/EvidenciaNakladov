@@ -63,9 +63,8 @@ public class ZadajNovy extends JDialog {
     }
 
     private void onOK() throws SQLException {
-        // add your code here
-        System.out.println("bol stlačeny OK");
 
+        System.out.println("bol stlačeny OK");
         Sluzby sluzby=new Sluzby();
 
         // vlozenie do objektu novy vydavok
@@ -81,24 +80,14 @@ public class ZadajNovy extends JDialog {
 //      novyvydavok.setDatum(textField3.getText());  //datum
         novyvydavok.setKategoria(textField4.getText());
 
-        // vytvaranie prippojenia na Databazu
-        Connection conn = null;
-        String url = "jdbc:mysql://localhost:3306/vydavky";
-        String username = "root";
-        String password = "password";
+//        Connection conn= sluzby.otvorDatabazu(); // MysQL
+        Connection conn= sluzby.otvorH2(); // H2
 
-        if (conn == null) { // vytvorili sme tzv. singleton
-            conn = DriverManager.getConnection(url, username, password);
-            System.out.println("Databáza je pripojená!");
-            vydavkyGui.getLabel().setText("Databaza je pripojena");
-        }
-        //-----------------------------------------------------
-
-
-        sluzby.vlozVydavokMySql(conn,novyvydavok);  //vloz do databazy conn
+//        sluzby.vlozVydavokMySql(conn,novyvydavok);  //vloz do databazy conn
+        sluzby.vlozVydavokH2(conn,novyvydavok);
         JTable table1 = vydavkyGui.getTable1();
 
-        int poslednyzaznam= sluzby.cisloposlednyZaznam(conn);
+        int poslednyzaznam= sluzby.cisloposlednyZaznamH2(conn);
         novyvydavok.setId(poslednyzaznam);
 
 
@@ -107,7 +96,6 @@ public class ZadajNovy extends JDialog {
         Object[] data = {novyvydavok.getId(),novyvydavok.getPopisVydavku(), novyvydavok.getSuma(), novyvydavok.getDatum(), novyvydavok.getKategoria()};
         DefaultTableModel model = (DefaultTableModel) table1.getModel();
         model.addRow(data);
-//      table1.updateUI();
 
         dispose();
     }
