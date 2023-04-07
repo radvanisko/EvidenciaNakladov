@@ -366,8 +366,6 @@ public class Sluzby implements InterfaceSluzby {
     }
 
 
-
-
     @Override
     public Connection otvorDatabazu() throws SQLException {
 
@@ -397,4 +395,25 @@ public class Sluzby implements InterfaceSluzby {
         return conn;
     }
 
+    @Override
+    public ArrayList<String> zoznamKategoriaH2(Connection conn) throws SQLException {
+
+        String query ="SELECT DISTINCT kategoria FROM vydavky.vydavky01";
+        PreparedStatement statement=conn.prepareStatement(query);
+        ResultSet result = statement.executeQuery();
+
+
+        ArrayList<String> zoznam=new ArrayList<String>();
+        System.out.println("Toto mam v result");
+
+        // nemam spravny result
+
+        while (result.next()) {
+            zoznam.add(result.getString(1));
+
+        }
+
+        return zoznam;
+
+    }
 }

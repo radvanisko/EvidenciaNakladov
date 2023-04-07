@@ -9,8 +9,5 @@
         <module name="EvidenciaNakladov" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="EvidenciaNakladov" target="19" />
-    </bytecodeTargetLevel>
   </component>
 </project>

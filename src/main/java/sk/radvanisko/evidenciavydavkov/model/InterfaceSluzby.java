@@ -47,6 +47,8 @@ public interface InterfaceSluzby {
      HashMap <String, Double> sumaVydavkovKategoria (Connection conn)throws SQLException;;
 
 
+     ArrayList <String> zoznamKategoriaH2  (Connection conn)throws SQLException;;
+
 
 
 }

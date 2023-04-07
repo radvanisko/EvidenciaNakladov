@@ -1,4 +1,6 @@
-//todo connh2  vyuzitie databazy H2
+
+//TODO editovanie tabulky  /enable /disable
+//TODO  zadavanie datumu
 
 
 package sk.radvanisko.evidenciavydavkov.gui;
@@ -16,16 +18,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
 
 public class VydavkyGui {
 
     JPanel panelHlavny;
     private JTable table1;
-    private JButton zmažVýdavokButton;
-    private JButton zadajVýdavokButton;
+    private JButton zmažVydavokButton;
+    private JButton zadajVydavokButton;
     private JButton editujButton;
     private JButton vytlačPdfButton;
     private JPanel panelButtony;
@@ -95,15 +97,13 @@ public class VydavkyGui {
         colModel.getColumn(3).setPreferredWidth(50);
 
         //otvorenie databazy
-        Sluzby sluzby = new Sluzby();
+        final Sluzby sluzby = new Sluzby();
 
 //        Connection conn=sluzby.otvorDatabazu(); //MySQL
         Connection conn=sluzby.otvorH2(); // H2
 
 
         getLabel().setText("Databaza H2 je pripojena");
-
-
 
         ArrayList<Vydavok> vydavky = new ArrayList<Vydavok>();
         vydavky = sluzby.vyberVsetkyMySql(conn);  //naplnil som arraylist vydavky z dtb
@@ -114,13 +114,20 @@ public class VydavkyGui {
         }
 
 
-        zadajVýdavokButton.addActionListener(new ActionListener() {
+        zadajVydavokButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
 
-                ZadajNovy dialog = new ZadajNovy(VydavkyGui.this);
+                ZadajNovy dialog;
+                try {
+                    dialog = new ZadajNovy(VydavkyGui.this);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 dialog.pack();
+
+
                 dialog.setLocationRelativeTo(null); // vycentrovanie okna
                 dialog.setVisible(true);
 //                System.exit(0);
@@ -128,8 +135,8 @@ public class VydavkyGui {
             }
         });
 
-        Connection finalConn = conn;
-        vytlačPdfButton.addActionListener(new ActionListener() {
+        final Connection finalConn = conn;
+                vytlačPdfButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -145,9 +152,6 @@ public class VydavkyGui {
 
                 JOptionPane.showMessageDialog (null, "Súbor bol  vytvorený", "Tlač zoznamu do pdf", JOptionPane.INFORMATION_MESSAGE);
 
-
-
-
             }
         });
         editujButton.addActionListener(new ActionListener() {
@@ -156,7 +160,7 @@ public class VydavkyGui {
                 JOptionPane.showMessageDialog (null, "Editovanie, alebo ina funkcia", "Nazov funkcie", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        zmažVýdavokButton.addActionListener(new ActionListener() {
+        zmažVydavokButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -169,7 +173,9 @@ public class VydavkyGui {
               if ((row<0))
                 {JOptionPane.showMessageDialog (null, "Zvoľ si prosím zaznam, ktorý chceš vymazať", "Vymaž záznam", JOptionPane.INFORMATION_MESSAGE);}
               else {
-                  id = (int) table1.getModel().getValueAt(row, column);
+                  Object hodnota = table1.getModel().getValueAt(row, column);
+                  if (hodnota instanceof Integer) id= (Integer) hodnota;
+
 
                   int input=JOptionPane.showConfirmDialog (null, " Naozaj chceš zmazať záznam s číslom :  " + id, "Vymaž záznam", JOptionPane.OK_CANCEL_OPTION);
                   System.out.println(input);
