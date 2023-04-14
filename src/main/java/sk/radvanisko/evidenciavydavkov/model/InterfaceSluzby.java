@@ -2,6 +2,9 @@ package sk.radvanisko.evidenciavydavkov.model;
 
 import com.itextpdf.text.DocumentException;
 
+import java.awt.*;
+import java.awt.print.PageFormat;
+import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,6 +33,9 @@ public interface InterfaceSluzby {
 
     void vytlacMySql2Pdf(Connection conn) throws SQLException, DocumentException, IOException;
 
+    void vytlacMySql2Printer(Connection conn) throws SQLException, DocumentException, IOException, PrinterException;
+
+
     double sumaVydavkovAll(Connection conn);
      int pocetPoloziek(Connection conn) throws SQLException;
     int pocetPoloziekH2(Connection conn) throws SQLException;
@@ -41,14 +47,8 @@ public interface InterfaceSluzby {
 
      Connection otvorH2 () throws SQLException;
 
-
-
-
      HashMap <String, Double> sumaVydavkovKategoria (Connection conn)throws SQLException;;
 
-
      ArrayList <String> zoznamKategoriaH2  (Connection conn)throws SQLException;;
-
-
 
 }

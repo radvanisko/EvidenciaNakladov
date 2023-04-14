@@ -1,6 +1,10 @@
 package sk.radvanisko.evidenciavydavkov.model;
 
 import java.awt.*;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -16,16 +20,19 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 
-public class Sluzby implements InterfaceSluzby {
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.swing.*;
 
+public class Sluzby implements InterfaceSluzby {
 
 
 //    private Connection conn;
 
 
     public Sluzby() {
-
     }
+
 
     @Override
     public void vlozVydavokMySql(Connection conn, Vydavok vydavok) throws SQLException {
@@ -41,7 +48,7 @@ public class Sluzby implements InterfaceSluzby {
 //        pstmt.executeQuery();
         pstmt.executeUpdate();
 
-        System.out.println(String.format("%-5s %15s   %7s %12s %12s", vydavok.getId(),vydavok.getPopisVydavku(),vydavok.getSuma(),vydavok.getDatum(),vydavok.getKategoria()));
+        System.out.println(String.format("%-5s %15s   %7s %12s %12s", vydavok.getId(), vydavok.getPopisVydavku(), vydavok.getSuma(), vydavok.getDatum(), vydavok.getKategoria()));
 //        System.out.println(rs.next());
 
     }
@@ -79,7 +86,7 @@ public class Sluzby implements InterfaceSluzby {
     @Override
     public void aktualizujVydavokMySql(int id, Connection conn, Vydavok vydavok) throws SQLException {
 
-       String query="UPDATE vydavky.vydavky01 SET popisvydavku = ?, suma = ?, datum = ?, kategoria = ?  WHERE id = ?";
+        String query = "UPDATE vydavky.vydavky01 SET popisvydavku = ?, suma = ?, datum = ?, kategoria = ?  WHERE id = ?";
 //        String query="UPDATE vydavky SET popisvydavku = ?, suma = ?, datum = ?, kategoria = ?  WHERE id = ?";
 
         PreparedStatement statement = conn.prepareStatement(query);
@@ -141,11 +148,11 @@ public class Sluzby implements InterfaceSluzby {
     }
 
     @Override
-    public Vydavok  vlozVydavok() {
+    public Vydavok vlozVydavok() {
 
         Scanner sc1 = new Scanner(System.in);
         String vstup;
-        double vstupcena=0;
+        double vstupcena = 0;
         System.out.println("Zadaj popis výdavku");
         vstup = sc1.nextLine();
 
@@ -159,7 +166,7 @@ public class Sluzby implements InterfaceSluzby {
 
                 System.out.println(" Nezadal si spravne hodnotu nakladu, táto položka sa nezapísala");
                 System.out.println("Zadaj svoju volbu:");
-                 return null;
+                return null;
             }
             vydavok.setSuma((float) vstupcena);
 
@@ -175,8 +182,8 @@ public class Sluzby implements InterfaceSluzby {
             return vydavok;
         }
 
-            return null;
-        }
+        return null;
+    }
 
     @Override
     public void vypisMenu() {
@@ -212,18 +219,18 @@ public class Sluzby implements InterfaceSluzby {
 
     @Override
     public void vytlacMySql2Pdf(Connection conn) throws SQLException, DocumentException, IOException {
-        ArrayList<Vydavok> vydavky =new ArrayList<Vydavok>();
-        int pocet =pocetPoloziekH2(conn);
-        double sucet= sumaVydavkovAll(conn);
+        ArrayList<Vydavok> vydavky = new ArrayList<Vydavok>();
+        int pocet = pocetPoloziekH2(conn);
+        double sucet = sumaVydavkovAll(conn);
 
-        vydavky=vyberVsetkyMySql(conn);
+        vydavky = vyberVsetkyMySql(conn);
 
         Calendar currenttime = Calendar.getInstance();
         Date dnesnydatum = new Date((currenttime.getTime()).getTime());
 
         // START - generovanie PDF
         Document document = new Document(); // vytvorime prazdny PDF Dokument
-        String unicodeFontPath="C:/Windows/Fonts/Tahoma.ttf";
+        String unicodeFontPath = "C:/Windows/Fonts/Tahoma.ttf";
         BaseFont unicode = BaseFont.createFont(unicodeFontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
         Font font = new Font(unicode, 12, Font.NORMAL);
         Font fontNadpis = new Font(unicode, 18, Font.BOLD);
@@ -233,22 +240,22 @@ public class Sluzby implements InterfaceSluzby {
 
         try {
             // vytvori konkretny subor HelloWorld.pdf, ktorý umiestni do priečinka \\Mac\Home\Documents\
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("report_vydavkov" + dnesnydatum+".pdf" ));
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("report_vydavkov" + dnesnydatum + ".pdf"));
             document.open(); // dokument musime ho otvorit
 //            document.add(new Header
-            document.add(new Paragraph("Zoznam výdavkov :   ",fontNadpis)); // do dokumentu vpiseme text  PDF documentu
+            document.add(new Paragraph("Zoznam výdavkov :   ", fontNadpis)); // do dokumentu vpiseme text  PDF documentu
 
-            for (Vydavok vystup: vydavky) {
-                document.add(new Paragraph(String.format("%-5s %15s   %7s %12s %12s", vystup.getId(),vystup.getPopisVydavku(),vystup.getSuma(),vystup.getDatum(),vystup.getDatum()),font));
+            for (Vydavok vystup : vydavky) {
+                document.add(new Paragraph(String.format("%-5s %15s   %7s %12s %12s", vystup.getId(), vystup.getPopisVydavku(), vystup.getSuma(), vystup.getDatum(), vystup.getDatum()), font));
 //                System.out.println(String.format("%-5s %15s   %7s %12s %12s", "ID",vystup.getPopisVydavku(),vystup.getSuma(),vystup.getDatum(),vystup.getDatum()));
             }
-            document.add(new Paragraph("Suma výdavkov je: "+ sucet + "  Počet položiek je:  " +pocet,fontNadpis));
+            document.add(new Paragraph("Suma výdavkov je: " + sucet + "  Počet položiek je:  " + pocet, fontNadpis));
             document.close(); // zatvorime dokument
             writer.close(); // zatvorime subor
 
             if (Desktop.isDesktopSupported()) {
                 try {
-                    File myFile = new File("report_vydavkov" + dnesnydatum+ ".pdf");
+                    File myFile = new File("report_vydavkov" + dnesnydatum + ".pdf");
                     Desktop.getDesktop().open(myFile);
                 } catch (IOException ex) {
                     // no application registered for PDFs
@@ -263,7 +270,6 @@ public class Sluzby implements InterfaceSluzby {
             System.out.println("Problém so súborom!");
         }
 // END - generovanie PDF
-
 
 
     }
@@ -297,9 +303,9 @@ public class Sluzby implements InterfaceSluzby {
         PreparedStatement stmt = conn.prepareStatement(query);
         ResultSet resultSet = stmt.executeQuery(query);
         resultSet.next();
-        pocet= resultSet.getInt("pocet");
+        pocet = resultSet.getInt("pocet");
         return pocet;
-   }
+    }
 
     @Override
     public int pocetPoloziekH2(Connection conn) throws SQLException {
@@ -308,7 +314,7 @@ public class Sluzby implements InterfaceSluzby {
         PreparedStatement stmt = conn.prepareStatement(query);
         ResultSet resultSet = stmt.executeQuery();
         resultSet.next();
-        pocet= resultSet.getInt("pocet");
+        pocet = resultSet.getInt("pocet");
         return pocet;
     }
 
@@ -316,11 +322,11 @@ public class Sluzby implements InterfaceSluzby {
     public HashMap sumaVydavkovKategoria(Connection conn) throws SQLException {
 
 //        String query ="SELECT kategoria, SUM(suma)AS 'Suma podľa kategorie' FROM vydavky01 GROUP BY kategoria";
-        String query ="SELECT kategoria, SUM(suma)AS 'Suma podľa kategorie' FROM vydavky GROUP BY kategoria";
-        PreparedStatement statement=conn.prepareStatement(query);
+        String query = "SELECT kategoria, SUM(suma)AS 'Suma podľa kategorie' FROM vydavky GROUP BY kategoria";
+        PreparedStatement statement = conn.prepareStatement(query);
         ResultSet result = statement.executeQuery();
 
-        HashMap <String, Double> vyber=new HashMap<String,Double>();
+        HashMap<String, Double> vyber = new HashMap<String, Double>();
 
         while (result.next()) {
             vyber.put(result.getString("kategoria"), result.getDouble("Suma podľa kategorie"));
@@ -338,23 +344,23 @@ public class Sluzby implements InterfaceSluzby {
 
     @Override
     public int cisloposlednyZaznam(Connection conn) throws SQLException {
-      int posledny;
-    String query= "SELECT * FROM vydavky.vydavky01 WHERE id=(SELECT MAX(id) FROM vydavky.vydavky01)";
-    PreparedStatement stmt = conn.prepareStatement(query);
+        int posledny;
+        String query = "SELECT * FROM vydavky.vydavky01 WHERE id=(SELECT MAX(id) FROM vydavky.vydavky01)";
+        PreparedStatement stmt = conn.prepareStatement(query);
         ResultSet resultSet = stmt.executeQuery(query);
         resultSet.next();
-        posledny= resultSet.getInt("id");
+        posledny = resultSet.getInt("id");
         return posledny;
     }
 
     @Override
     public int cisloposlednyZaznamH2(Connection conn) throws SQLException {
         int posledny;
-        String query= "SELECT * FROM vydavky.vydavky01 WHERE id=(SELECT MAX(id) FROM vydavky.vydavky01)";
+        String query = "SELECT * FROM vydavky.vydavky01 WHERE id=(SELECT MAX(id) FROM vydavky.vydavky01)";
         PreparedStatement stmt = conn.prepareStatement(query);
         ResultSet resultSet = stmt.executeQuery();
         resultSet.next();
-        posledny= resultSet.getInt("id");
+        posledny = resultSet.getInt("id");
         return posledny;
 
 /*
@@ -388,22 +394,22 @@ public class Sluzby implements InterfaceSluzby {
     @Override
     public Connection otvorH2() throws SQLException {
 
-        Connection conn = DriverManager.getConnection("jdbc:h2:C:\\Users\\radvanisko\\JavaProjekty\\EvidenciaNakladov\\EvidenciaNakladov\\databaza\\vydavky","sa","");
+        Connection conn = DriverManager.getConnection("jdbc:h2:C:\\Users\\radvanisko\\JavaProjekty\\EvidenciaNakladov\\EvidenciaNakladov\\databaza\\vydavky", "sa", "");
         /*if (conn == null) { // vytvorili sme tzv. singleton
             conn = DriverManager.getConnection(url, username, password);*/
-            System.out.println("Databáza H2  je pripojená!");
+        System.out.println("Databáza H2  je pripojená!");
         return conn;
     }
 
     @Override
     public ArrayList<String> zoznamKategoriaH2(Connection conn) throws SQLException {
 
-        String query ="SELECT DISTINCT kategoria FROM vydavky.vydavky01";
-        PreparedStatement statement=conn.prepareStatement(query);
+        String query = "SELECT DISTINCT kategoria FROM vydavky.vydavky01";
+        PreparedStatement statement = conn.prepareStatement(query);
         ResultSet result = statement.executeQuery();
 
 
-        ArrayList<String> zoznam=new ArrayList<String>();
+        ArrayList<String> zoznam = new ArrayList<String>();
         System.out.println("Toto mam v result");
 
         // nemam spravny result
@@ -416,4 +422,73 @@ public class Sluzby implements InterfaceSluzby {
         return zoznam;
 
     }
+
+    @Override
+    public void vytlacMySql2Printer(Connection conn) throws SQLException, DocumentException, IOException, PrinterException {
+
+        ArrayList<Vydavok> vydavky = new ArrayList<Vydavok>();
+        int pocet = pocetPoloziekH2(conn);
+        double sucet = sumaVydavkovAll(conn);
+
+        vydavky = vyberVsetkyMySql(conn);
+        Calendar currenttime = Calendar.getInstance();
+        Date dnesnydatum = new Date((currenttime.getTime()).getTime());
+
+        PrintService[] printers = PrintServiceLookup.lookupPrintServices(null, null);
+        // Print the names of all available printers
+        System.out.println("Available printers:");
+        for (PrintService printer : printers) {
+            System.out.println(printer.getName());
+        }
+        // Get the default printer
+        PrintService defaultPrinter = PrintServiceLookup.lookupDefaultPrintService();
+
+        // Create a printer job
+        PrinterJob job = PrinterJob.getPrinterJob();
+//         job.setPrintService(defaultPrinter);
+
+        Printable printableContent = new Printable() {
+
+            @Override
+
+            public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+
+                ArrayList<Vydavok> vydavky = new ArrayList<Vydavok>();
+                try {
+                    vydavky = vyberVsetkyMySql(conn);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (pageIndex >= 1) {
+                    return Printable.NO_SUCH_PAGE;
+                }
+
+                Graphics2D g2d = (Graphics2D) graphics;
+                g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+
+                int lineHeight = graphics.getFontMetrics().getHeight();
+                int y = 20;
+
+                for (Vydavok line : vydavky) {
+                    y += lineHeight;
+                    graphics.drawString(line.getPopisVydavku(), 60, y);
+                }
+
+                return Printable.PAGE_EXISTS;
+
+            }
+
+
+
+        };
+        job.printDialog();
+        defaultPrinter=job.getPrintService();
+        System.out.println("Vybrana tlaciaren je :" + defaultPrinter);
+
+        job.setPrintable(printableContent);
+        job.print();
+
+    }
 }
+

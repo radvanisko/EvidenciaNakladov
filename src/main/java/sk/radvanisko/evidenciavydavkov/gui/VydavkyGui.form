@@ -10,7 +10,7 @@
       <font size="16" style="1"/>
     </border>
     <children>
-      <grid id="dcfa0" binding="panelButtony" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="dcfa0" binding="panelButtony" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false">
@@ -36,7 +36,7 @@
               <text value="edituj"/>
             </properties>
           </component>
-          <component id="d4c96" class="javax.swing.JButton" binding="vytlačPdfButton" default-binding="true">
+          <component id="d4c96" class="javax.swing.JButton" binding="vytlacPdfButton" default-binding="true">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -50,6 +50,14 @@
             </constraints>
             <properties>
               <text value="Zadaj výdavok"/>
+            </properties>
+          </component>
+          <component id="d2451" class="javax.swing.JButton" binding="tlacButton" default-binding="true">
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Tlač"/>
             </properties>
           </component>
         </children>

@@ -16,6 +16,7 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -29,11 +30,12 @@ public class VydavkyGui {
     private JButton zmažVydavokButton;
     private JButton zadajVydavokButton;
     private JButton editujButton;
-    private JButton vytlačPdfButton;
+    private JButton vytlacPdfButton;
     private JPanel panelButtony;
     private JPanel panel3;
     private JLabel label;
     JPanel paneltable;
+    private JButton tlacButton;
 
 // konstruktors
 
@@ -136,7 +138,7 @@ public class VydavkyGui {
         });
 
         final Connection finalConn = conn;
-                vytlačPdfButton.addActionListener(new ActionListener() {
+                vytlacPdfButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -198,6 +200,28 @@ public class VydavkyGui {
 
               }
             }
+        });
+        tlacButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    sluzby.vytlacMySql2Printer(finalConn);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                } catch (DocumentException ex) {
+                    throw new RuntimeException(ex);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                } catch (PrinterException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                JOptionPane.showMessageDialog (null, "Súbor bol  vytvorený", "Tlač zoznamu do pdf", JOptionPane.INFORMATION_MESSAGE);
+
+            }
+
         });
     }
 
