@@ -138,7 +138,7 @@ public class Main {
                 case  "4": // oprav zaznam
 
 
-                    System.out.println("Zadaj číslo zaznamu, ktorý chceš editovať!");
+                    System.out.println("Zadaj číslo záznamu, ktorý chceš editovať!");
                     Scanner sc4 = new Scanner(System.in);
                     int id;
                     id=sc4.nextInt();  //todo treba osetrit vstup

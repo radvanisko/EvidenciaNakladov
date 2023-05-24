@@ -97,7 +97,11 @@
             <children>
               <component id="b3d9a" class="javax.swing.JTable" binding="table1" default-binding="true">
                 <constraints/>
-                <properties/>
+                <properties>
+                  <enabled value="true"/>
+                  <focusable value="true"/>
+                  <rowSelectionAllowed value="true"/>
+                </properties>
               </component>
             </children>
           </scrollpane>

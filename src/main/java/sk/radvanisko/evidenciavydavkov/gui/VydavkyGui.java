@@ -36,6 +36,7 @@ public class VydavkyGui {
     private JLabel label;
     JPanel paneltable;
     private JButton tlacButton;
+    boolean tableEditable;
 
 // konstruktors
 
@@ -74,11 +75,22 @@ public class VydavkyGui {
         Object columnNames[] = {"Id","Popis vydavku", "Suma", "Datum ", "Kategoria"};
 
         DefaultTableModel daDefaultTableModel = new DefaultTableModel(0, 0);
-        table1 = new JTable(data, columnNames);
+        tableEditable=false;
+        table1 = new JTable(data, columnNames){
+
+            //  // Override the isCellEditable method to make all cells not editable
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return tableEditable;
+        }
+        };
 
         JTableHeader header = table1.getTableHeader();
         daDefaultTableModel.setColumnIdentifiers(columnNames);
+
+        table1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // // Enable row selection
         table1.setModel(daDefaultTableModel);
+
 
         paneltable.setLayout(new BorderLayout());
         paneltable.add(header, BorderLayout.NORTH);
@@ -159,7 +171,19 @@ public class VydavkyGui {
         editujButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog (null, "Editovanie, alebo ina funkcia", "Nazov funkcie", JOptionPane.INFORMATION_MESSAGE);
+                tableEditable=!tableEditable;
+                if (tableEditable==true) JOptionPane.showMessageDialog (null, "Editovanie je povolené.. ", "Prepinač editovania", JOptionPane.INFORMATION_MESSAGE);
+                else JOptionPane.showMessageDialog (null, "Editovanie je zakázané.. ", "Prepinač editovania", JOptionPane.INFORMATION_MESSAGE);
+
+                table1 = new JTable(data, columnNames){
+
+                    //  // Override the isCellEditable method to make all cells not editable
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return tableEditable;
+                    }
+                };
+
             }
         });
         zmažVydavokButton.addActionListener(new ActionListener() {
@@ -218,7 +242,7 @@ public class VydavkyGui {
                     throw new RuntimeException(ex);
                 }
 
-                JOptionPane.showMessageDialog (null, "Súbor bol  vytvorený", "Tlač zoznamu do pdf", JOptionPane.INFORMATION_MESSAGE);
+//                JOptionPane.showMessageDialog (null, "Súbor bol  vytvorený", "Tlač zoznamu do pdf", JOptionPane.INFORMATION_MESSAGE);
 
             }
 

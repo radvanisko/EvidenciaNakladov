@@ -322,7 +322,7 @@ public class Sluzby implements InterfaceSluzby {
     public HashMap sumaVydavkovKategoria(Connection conn) throws SQLException {
 
 //        String query ="SELECT kategoria, SUM(suma)AS 'Suma podľa kategorie' FROM vydavky01 GROUP BY kategoria";
-        String query = "SELECT kategoria, SUM(suma)AS 'Suma podľa kategorie' FROM vydavky GROUP BY kategoria";
+        String query = "SELECT kategoria, SUM(suma)AS 'Suma podľa kategorie' FROM vydavky.vydavky01 GROUP BY kategoria";
         PreparedStatement statement = conn.prepareStatement(query);
         ResultSet result = statement.executeQuery();
 
@@ -482,12 +482,17 @@ public class Sluzby implements InterfaceSluzby {
 
 
         };
-        job.printDialog();
-        defaultPrinter=job.getPrintService();
-        System.out.println("Vybrana tlaciaren je :" + defaultPrinter);
 
+        boolean userclickedOk;
+
+        if (job.printDialog()) { defaultPrinter=job.getPrintService();
+        System.out.println("Vybrana tlaciaren je :" + defaultPrinter);
         job.setPrintable(printableContent);
-        job.print();
+        job.print();}
+        else {
+            JOptionPane.showMessageDialog (null, "Tlač bola zrušena", "Tlač zoznamu", JOptionPane.INFORMATION_MESSAGE);
+
+        }
 
     }
 }
